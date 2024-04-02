@@ -1,5 +1,6 @@
 import express  from 'express';
 import {isExistedUser , getAllUsers , signIn , deleteUser , getSingleUser} from '../middlewares/validations';
+import {authorization} from '../middlewares/auth';
 const router = express.Router();
 /**
  * @swagger
@@ -39,7 +40,7 @@ router.post('/signin', signIn);
  *       '401':
  *         description: Unauthorized, authentication required
  */
-router.get('/allusers', getAllUsers);
+router.get('/allusers',authorization, getAllUsers);
 /**
  * @swagger
  * /api/deluser:

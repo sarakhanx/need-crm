@@ -84,7 +84,7 @@ export const signIn = async (
       { userId: user[0].id, username: user[0].username },
       // Replace with your secure secret
       process.env.JWT_SECRET || `${jwtToken}`,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.json({ message: "Login successful", token });
