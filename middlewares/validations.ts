@@ -78,7 +78,6 @@ export const signIn = async (
     if (!isValidPassword) {
       return res.status(401).json({ message: "Invalid username or password" });
     }
-
     // Generate a JWT
     const token = jwt.sign(
       { userId: user[0].id, username: user[0].username },
@@ -86,8 +85,13 @@ export const signIn = async (
       process.env.JWT_SECRET || `${jwtToken}`,
       { expiresIn: "1d" },
     );
-
-    res.json({ message: "Login successful", token });
+    const userData = {
+      id: user[0].id,
+      username: user[0].username,
+      name : user[0].name,
+      lastname : user[0].lastname,
+    }
+    res.json({ message: "Login successful", token ,userData  });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

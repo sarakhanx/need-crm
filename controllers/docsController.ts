@@ -41,17 +41,15 @@ export const createDoc = async (req: Request, res: Response) => {
   const pool = await createDatabasePool();
   try {
     conn = await pool.getConnection();
-    // Extract data from request body
     const { sellerId, dealerId, customerId } = req.body;
-    // Insert new document into the database
     const result = await conn.query(
       "INSERT INTO Doc (seller_id, dealer_id, client_id) VALUES (?, ?, ?)",
       [sellerId, dealerId, customerId]
     );
-    const docId = result.insertId;
+    const docId = parseInt(result.insertId);
     res.status(201).json({
       message: "Document created successfully",
-      data: { sellerId, dealerId, customerId },
+      data: { sellerId, dealerId, customerId , docId },
     });
   } catch (error) {
     console.error(error);

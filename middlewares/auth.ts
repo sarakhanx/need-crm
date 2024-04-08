@@ -1,8 +1,8 @@
 import  jwt  from 'jsonwebtoken';
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 const jwtToken = process.env.JWT_SECRET;
 
-export const authorization = async (req : Request , res : Response) =>{
+export const authorization = async (req : Request , res : Response ,next : NextFunction) =>{
     const authHeader = req.headers['authorization'];
     if(!authHeader || !authHeader.startsWith('Bearer')){
         return res.status(401).json({ message: 'Unauthorized' });
@@ -12,6 +12,7 @@ export const authorization = async (req : Request , res : Response) =>{
         if (err) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        res.json({ message: "Authorized", user: decoded });
+        next()
     })
+   
 }
