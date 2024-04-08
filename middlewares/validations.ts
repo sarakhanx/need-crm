@@ -51,7 +51,7 @@ export const isExistedUser = async (
     });
   } finally {
     if (conn) {
-      conn.release();
+      conn.end();
     }
   }
 };

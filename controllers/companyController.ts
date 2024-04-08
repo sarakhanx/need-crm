@@ -35,6 +35,11 @@ export const getAllCompanies = async (
   } catch (error) {
     console.log(error);
     next(error);
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 };
 export const createCompany = async (

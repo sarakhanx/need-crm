@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import createDatabasePool from "../libs/config/db.config";
-import dotenv from "dotenv";
-import path from "path";
-import fs from "fs";
 
 export const createCustomer = async (req: Request, res: Response) => {
   let conn;
@@ -44,6 +41,7 @@ export const createCustomer = async (req: Request, res: Response) => {
         .status(400)
         .json({ send: "some fields is blank or something went wrongs" });
     }
+    console.log(req.body)
     res.status(200).json({
       send: "data inserted successfully",
       data: {
@@ -54,6 +52,11 @@ export const createCustomer = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ send: "Internal server error" });
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 };
 export const getAllUser = async (req: Request, res: Response) => {
@@ -71,6 +74,11 @@ export const getAllUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ send: "Internal server error" });
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 };
 export const getSingleUser = async (req: Request, res: Response) => {
@@ -90,6 +98,11 @@ export const getSingleUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ send: "Internal server error" });
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 };
 export const deleteUser = async (req: Request, res: Response) => {
@@ -108,6 +121,11 @@ export const deleteUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ send: "Internal server error" });
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 };
 export const updateCustomer = async (req: Request, res: Response) => {
