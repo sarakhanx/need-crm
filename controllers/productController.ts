@@ -8,6 +8,7 @@ dotenv.config();
 export const createProduct = async (req: Request, res: Response) => {
   let conn;
   const pool = await createDatabasePool();
+  const doc_id = req.body.doc_id
   const {
     title,
     description,
@@ -17,8 +18,8 @@ export const createProduct = async (req: Request, res: Response) => {
     note,
     sku,
     discount,
-    doc_id
-  } = req.body;
+  } = req.body.item;
+  
   try {
     conn = await pool.getConnection();
     const sqlQuery =
@@ -48,6 +49,7 @@ export const createProduct = async (req: Request, res: Response) => {
         doc_id: doc_id
       },
     });
+    console.log(req.body.item)
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

@@ -207,3 +207,54 @@ export const getAllDocs = async (req: Request, res: Response) => {
     res.status(500).json({ error: "internal server error" });
   }
 };
+
+export const getDocsBySeller = async (req : Request , res : Response) =>{
+  let conn;
+  const pool = await createDatabasePool();
+  const sellerId = req.params.sellerId;
+  console.log(sellerId)
+try {
+  conn = await pool.getConnection();
+  const query = `SELECT
+  Doc.createdAt,
+  User.name AS user_name, User.lastname AS user_lastname, User.roles,
+  Company.company_name, Company.company_address, Company.company_contact, Company.company_vat_id,
+  Customer.name AS customer_name, Customer.lastname AS customer_lastname, Customer.customer_address, Customer.customer_mobile,
+  (
+    SELECT GROUP_CONCAT(CONCAT(
+      'Title: ', title, ', ',
+      'Size: ', size, ', ',
+      'Qty: ', qty, ', ',
+      'Price: ', price, ', ',
+      'Discount: ', discount, ', ',
+      'Total Price: ', total_price
+    ) SEPARATOR '; ') FROM Product WHERE Product.doc_id = Doc.id
+  ) AS products
+FROM Doc
+JOIN Company ON Doc.dealer_id = Company.id
+JOIN User ON Doc.seller_id = User.id
+JOIN Customer ON Doc.client_id = Customer.id
+WHERE User.id = ? ;`
+
+const docs = await conn.query(query, [sellerId]);
+const allDocs: DocumentData[] = [];
+for(let i = 0 ; i < docs.length ; i++){
+  const data : DocumentData = docs[i];
+  const productsString = docs[i].products;
+  const productsArray = productsString ? productsString.split("; ").map((product : any) => {
+    const attributes = product.split(", ");
+    const productObject : any = {};
+    attributes.forEach((attribute : any) => {
+      const [key , value] = attribute.split(": ");
+      productObject[key.trim()] = value.trim();
+    });
+    return productObject;
+  }) : [];
+  allDocs.push({ ...data , productsArray})
+}
+
+res.status(200).json({ docs: allDocs });
+} catch (error : Error | any) {
+  throw new Error(error)
+}
+}
