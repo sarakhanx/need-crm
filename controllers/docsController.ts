@@ -216,10 +216,10 @@ export const getDocsBySeller = async (req : Request , res : Response) =>{
 try {
   conn = await pool.getConnection();
   const query = `SELECT
-  Doc.createdAt,
+  Doc.createdAt, Doc.id AS id,
   User.name AS user_name, User.lastname AS user_lastname, User.roles,
   Company.company_name, Company.company_address, Company.company_contact, Company.company_vat_id,
-  Customer.name AS customer_name, Customer.lastname AS customer_lastname, Customer.customer_address, Customer.customer_mobile,
+  Customer.name AS customer_name, Customer.lastname AS customer_lastname, Customer.customer_address, Customer.customer_mobile, Customer.company_name AS customer_company_name, Customer.id AS customer_id,
   (
     SELECT GROUP_CONCAT(CONCAT(
       'Title: ', title, ', ',
@@ -250,7 +250,7 @@ for(let i = 0 ; i < docs.length ; i++){
     });
     return productObject;
   }) : [];
-  allDocs.push({ ...data , productsArray})
+  allDocs.push({ ...data ,  productsArray})
 }
 
 res.status(200).json({ docs: allDocs });

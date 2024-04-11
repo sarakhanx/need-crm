@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import pdfMaker from './routers/pdf-test'
 import signin_up from "./routers/userRoutes";
 import companyApis from "./routers/companyRoute";
 import customerRoutes from "./routers/customerRoute";
@@ -38,7 +39,8 @@ app.use(
   companyApis,
   customerRoutes,
   productRoute,
-  docsRoute
+  docsRoute,
+  pdfMaker
 );
 
 createDatabasePool()
