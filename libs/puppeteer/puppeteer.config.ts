@@ -1,9 +1,11 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
+import path from "path";
 dotenv.config();
-const url = process.env.PDF_URL
+
 
 export async function generatePDF(params : string | any) {
+    const filePath = path.join(__dirname, "../../uploads/pdf",`docs-no-${params}-${Date.now()}.pdf`);
     try {
         console.log("Launching browser...");
         const browser = await puppeteer.launch();
@@ -13,7 +15,7 @@ export async function generatePDF(params : string | any) {
         const page = await browser.newPage();
         console.log("New page opened successfully.");
 
-        const website = `${url}${params}`;
+        const website = `${process.env.PDF_URL}/${params}`;
         console.log("Navigating to:", website);
 
         await page.goto(website, { waitUntil: "networkidle0" });
@@ -21,16 +23,14 @@ export async function generatePDF(params : string | any) {
 
         console.log("Generating PDF...");
         const pdf = await page.pdf({
-            path: `${website}.pdf`,
+            path: filePath,
             margin: { top: '10px', right: '5px', bottom: '10px', left: '5px' },
             printBackground: true,
             format: 'A4',
         });
         console.log("PDF generated successfully.");
-
         await browser.close();
         console.log("Browser closed.");
-
         return pdf;
     } catch (error) {
         console.error("An error occurred:", error);

@@ -20,6 +20,7 @@ export interface DocumentData {
   products: string;
   total: string;
   productsArray: any | [];
+  company_logo_path:string | null ;
 }
 
 export const getSomeDoc = async (req : Request, res: Response)=> {
@@ -95,40 +96,67 @@ export const getADoc = async (req: Request, res: Response) => {
     conn = await pool.getConnection();
     const doc = await conn.query(
       `SELECT
-      Doc.createdAt AS doc_createdAt,
-      User.name AS user_name, User.lastname AS user_lastname, User.roles AS user_roles,
-      Company.company_name AS company_name, Company.company_address AS company_address, Company.company_contact AS company_contact, Company.company_vat_id AS company_vat_id,
-      Customer.name AS customer_name, Customer.lastname AS customer_lastname, Customer.customer_address AS customer_address, Customer.customer_mobile AS customer_mobile,
-      (SELECT GROUP_CONCAT(CONCAT( 
-          'Title: ', title, ', ',
-          'Size: ', size, ', ',
-          'Qty: ', qty, ', ',
-          'Price: ', price, ', ',
-          'Discount: ', discount, ', ',
-          'Total Price: ', total_price
-      ) SEPARATOR '; ') FROM Product WHERE Product.doc_id = Doc.id) AS products,
-      (SELECT SUM(total_price) FROM Product WHERE Product.doc_id = Doc.id) AS total
-  FROM Doc
-  JOIN Company ON Doc.dealer_id = Company.id
-  JOIN User ON Doc.seller_id = User.id
-  JOIN Customer ON Doc.client_id = Customer.id
-  WHERE Doc.id = ?;
-  `,
+          Doc.createdAt AS doc_createdAt,
+          Doc.id as DocId,
+          User.name AS user_name,
+          User.lastname AS user_lastname,
+          User.roles AS user_roles,
+          Company.logo AS company_logo,
+          Company.company_name AS company_name,
+          Company.company_address AS company_address,
+          Company.company_contact AS company_contact,
+          Company.company_vat_id AS company_vat_id,
+          Customer.name AS customer_name,
+          Customer.lastname AS customer_lastname,
+          Customer.customer_address AS customer_address,
+          Customer.customer_mobile AS customer_mobile,
+          Customer.company_name AS customer_company_name,
+          (
+              SELECT GROUP_CONCAT(
+                  CONCAT(
+                      'Title: ', title, ', ',
+                      'Size: ', size, ', ',
+                      'Qty: ', qty, ', ',
+                      'Price: ', price, ', ',
+                      'Discount: ', discount, ', ',
+                      'Total Price: ', total_price
+                  ) SEPARATOR '; '
+              )
+              FROM Product
+              WHERE Product.doc_id = Doc.id
+          ) AS products,
+          (
+              SELECT SUM(total_price)
+              FROM Product
+              WHERE Product.doc_id = Doc.id
+          ) AS net
+      FROM Doc
+      JOIN Company ON Doc.dealer_id = Company.id
+      JOIN User ON Doc.seller_id = User.id
+      JOIN Customer ON Doc.client_id = Customer.id
+      WHERE Doc.id = ?;
+      `,
       [DocId]
     );
     const data = doc[0];
     const productsString = doc[0].products;
-    const productsArray =productsString ? productsString.split("; ").map((product: any) => {
-      const attributes = product.split(", "); // Split each product into its attributes
-      const productObject = {} as any;
-      attributes.forEach((attribute: any) => {
-        const [key, value] = attribute.split(": "); // Split each attribute into key-value pair
-        productObject[key.trim()] = value.trim();
-      });
-      return productObject;
-    }):[];
+    const productsArray = productsString
+      ? productsString.split("; ").map((product: any) => {
+          const attributes = product.split(", ");
+          const productObject = {} as any;
+          attributes.forEach((attribute: any) => {
+            const [key, value] = attribute.split(": ");
+            productObject[key.trim()] = value.trim();
+          });
+          return productObject;
+        })
+      : [];
     const documentData: DocumentData = { ...data, productsArray };
-    // res.status(200).json({ doc: productsArray });
+
+    const logoPath = data.company_logo
+      ? `http://localhost:5500/uploads/company_assets/${data.company_logo}`
+      : null;
+    documentData.company_logo_path = logoPath;
     res.status(200).json({ doc: documentData });
   } catch (error) {
     console.error(error);
@@ -139,6 +167,7 @@ export const getADoc = async (req: Request, res: Response) => {
     }
   }
 };
+
 
 export const deleteDoc = async (req: Request, res: Response) => {
   const params = req.params.id;
