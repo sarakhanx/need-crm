@@ -11,7 +11,7 @@ import customerRoutes from "./routers/customerRoute";
 import productRoute from "./routers/productRoute";
 import docsRoute from "./routers/docsRoute";
 import swaggerDocs from "./swagger";
-import path = require("path");
+import path from "path";
 
 dotenv.config();
 const app = express();
