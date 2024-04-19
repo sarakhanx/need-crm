@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import fs from "fs";
 dotenv.config();
+const originUrl = process.env.ORIGIN_URL;
 export interface DocumentData {
   doc_createdAt: string;
   user_name: string;
@@ -154,7 +155,7 @@ export const getADoc = async (req: Request, res: Response) => {
     const documentData: DocumentData = { ...data, productsArray };
 
     const logoPath = data.company_logo
-      ? `http://localhost:5500/uploads/company_assets/${data.company_logo}`
+      ? `${originUrl}/uploads/company_assets/${data.company_logo}`
       : null;
     documentData.company_logo_path = logoPath;
     res.status(200).json({ doc: documentData });
