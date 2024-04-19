@@ -25,6 +25,7 @@ export async function generatePDF(params : string | any) {
 
         const website = `${process.env.PDF_URL}/${params}`;
         console.log("Navigating to:", website);
+        await page.setBypassCSP(true);
 
         await page.goto(website, { waitUntil: "networkidle0" });
         console.log("Page navigation complete.");
