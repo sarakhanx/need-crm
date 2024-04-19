@@ -21,7 +21,7 @@ app.use(express.json());
 app.disable('etag');
 
 const corsOption = {
-  origin: true,
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   optionsSuccessStatus: 200,
