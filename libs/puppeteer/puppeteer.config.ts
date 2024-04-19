@@ -8,7 +8,15 @@ export async function generatePDF(params : string | any) {
     const filePath = path.join(__dirname, "../../uploads/pdf",`docs-no-${params}-${Date.now()}.pdf`);
     try {
         console.log("Launching browser...");
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: true,
+            args: [
+                '--disable-web-security',
+                '--disable-features=IsolateOrigins',
+                '--disable-site-isolation-trials'
+            ]
+        });
         console.log("Browser launched successfully.");
 
         console.log("Opening new page...");
