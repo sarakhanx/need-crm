@@ -9,6 +9,7 @@ export async function generatePDF(params : string | any) {
     try {
         console.log("Launching browser...");
         const browser = await puppeteer.launch({
+            executablePath: '/usr/bin/chromium-browser',
             headless: false,
             devtools: true,
             args: [
