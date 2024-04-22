@@ -9,7 +9,7 @@ export async function generatePDF(params : string | any) {
     try {
         console.log("Launching browser...");
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             devtools: true,
             args: [
                 '--disable-web-security',
