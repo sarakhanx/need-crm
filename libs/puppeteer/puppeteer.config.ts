@@ -10,11 +10,12 @@ export async function generatePDF(params : string | any) {
         console.log("Launching browser...");
         const browser = await puppeteer.launch({
             executablePath: '/usr/bin/chromium-browser',
-            headless: false,
+            headless: true,
             devtools: true,
             args: [
+                '--no-sandbox',
                 '--disable-web-security',
-                '--disable-features=IsolateOrigins',
+                '--disable-features=IsolateOrigins,site-per-process',
                 '--disable-site-isolation-trials'
             ]
         });
