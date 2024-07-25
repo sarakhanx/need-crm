@@ -1,8 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import createDatabasePool from "../libs/config/db.config";
 import dotenv from "dotenv";
-import path from "path";
-import fs from "fs";
 dotenv.config();
 
 export const createProduct = async (req: Request, res: Response) => {
@@ -89,6 +87,11 @@ export const getSingleProd = async (req : Request , res :Response)=>{
   } catch (error) {
     console.log(error)
     res.status(500).json({send : "Internal server error"})
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 }
 export const updateProduct = async (req : Request , res : Response) => {
@@ -151,5 +154,10 @@ export const deleteProduct = async (req : Request , res : Response)=>{
   } catch (error) {
     console.log(error)
     res.status(500).json({send : "Internal server error"})
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 }

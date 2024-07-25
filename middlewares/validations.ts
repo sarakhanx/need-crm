@@ -164,5 +164,9 @@ export const getSingleUser = async (req : Request , res : Response) =>{
   } catch (error) {
     console.log(error)
     res.status(400).json({send:"user not found"})
+  }finally {
+    if (conn) {
+      conn.release();
+    }
   }
 }

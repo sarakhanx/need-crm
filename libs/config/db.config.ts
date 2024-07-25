@@ -17,16 +17,22 @@ const createDatabasePool = async () => {
     connectionLimit: 5,
     host: DB_HOST,
     user: DB_USER,
+    port : 3306,
     password: DB_PASS,
     database: DB_NAME,
   });
-
+  let connection
   try {
-    const connection = await pool.getConnection();
+    connection = await pool.getConnection();
     connection.release();
     console.log("Database connected successfully");
   } catch (err: any) {
     console.error("Error connecting to the database:", err.message);
+  }finally{
+    if(connection){
+      connection.release();
+      console.log("Database connection released");
+    }
   }
 
   return pool;

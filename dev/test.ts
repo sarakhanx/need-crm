@@ -57,6 +57,11 @@ export async function fetchDataFromMariaDB() {
     console.error('Error:', error);
     // Close Puppeteer browser in case of error
     await browser.close();
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 }
 

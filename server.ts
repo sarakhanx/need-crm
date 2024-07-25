@@ -3,7 +3,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
-import bodyParser from "body-parser";
 import pdfMaker from './routers/pdf-test'
 import signin_up from "./routers/userRoutes";
 import companyApis from "./routers/companyRoute";
@@ -44,12 +43,13 @@ app.use(
 );
 
 createDatabasePool()
-  .then((pool) => {
+.then((pool) => {
     const port = parseInt(process.env.PORT || "3000", 10);
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
     swaggerDocs(app, port);
+    // console.log("Database connection established:", pool);
   })
   .catch((err) => {
     console.error("Failed to establish database connection:", err.message);

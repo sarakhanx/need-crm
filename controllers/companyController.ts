@@ -150,6 +150,11 @@ export const deleteCompany = async (req : Request , res : Response)=>{
     } catch (error) {
         console.log(error)
         res.status(500).json({send : "Internal server error"})
+    }finally{
+      if(conn){
+        conn.release();
+        console.log("Database connection released");
+      }
     }
 }
 export const getACompany = async (req : Request , res : Response)=>{
@@ -166,5 +171,10 @@ export const getACompany = async (req : Request , res : Response)=>{
   } catch (error) {
     console.log(error)
     res.status(500).json({send : "Internal server error"})
+  }finally{
+    if(conn){
+      conn.release();
+      console.log("Database connection released");
+    }
   }
 }
